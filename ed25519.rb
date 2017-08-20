@@ -1,12 +1,16 @@
 require 'rubygems'
 require 'openssl'
 
+def int2byte(i)
+  i.chr
+end
+
 def indexbytes(buf, i)
   buf[i].ord
 end
 
-def int2byte(i)
-  i.chr
+def intlist2bytes(l)
+  l.map {|c| c.chr }.join
 end
 
 $b = 256
@@ -137,7 +141,7 @@ def scalarmult_B(e)
 end
 
 def encodeint(y)
-  bits = (0...b).map {|i| (y >> i) & 1}
+  bits = (0...$b).map {|i| (y >> i) & 1}
   (0...$b/8).map {|i| int2byte((0...8).inject(0) {|sum, j| sum + (bits[i * 8 + j] << j) }) }.join
 end
 
@@ -174,7 +178,7 @@ def Hint(m)
 end
 
 def Hint_hash(m, hashobj)
-  h = hashobj(m).digest()
+  h = hashobj.call(m)
   (0...2*$b).inject(0) {|sum, i| sum + 2 ** i * bit(h, i) }
 end
 
@@ -188,7 +192,7 @@ def signature_unsafe(m, sk, pk)
     intlist2bytes(($b/8...$b/4).map {|j| indexbytes(h, j) }) + m
   )
   _R = scalarmult_B(r)
-  _S = (r + Hint(encodepoint(_R) + pk + m) * a) % l
+  _S = (r + Hint(encodepoint(_R) + pk + m) * a) % $l
   encodepoint(_R) + encodeint(_S)
 end
 
@@ -198,14 +202,14 @@ end
 # See module docstring.  This function should be used for testing only.
 # """
 def signature_hash_unsafe(m, sk, pk, hashobj)
-  h = hashobj(sk).digest()
+  h = hashobj.call(sk)
   a = 2 ** ($b-2) + (3...$b-2).inject(0) {|sum, i| sum + 2 ** i * bit(h, i) }
   r = Hint_hash(
     intlist2bytes(($b/8...$b/4).map {|j| indexbytes(h, j) }) + m,
     hashobj
   )
   _R = scalarmult_B(r)
-  _S = (r + Hint_hash(encodepoint(_R) + pk + m, hashobj) * a) % l
+  _S = (r + Hint_hash(encodepoint(_R) + pk + m, hashobj) * a) % $l
   encodepoint(_R) + encodeint(_S)
 end
 
