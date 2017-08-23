@@ -196,11 +196,9 @@ def signature_unsafe(m, sk, pk)
   encodepoint(_R) + encodeint(_S)
 end
 
-# """
 # Not safe to use with secret keys or secret data.
 #
 # See module docstring.  This function should be used for testing only.
-# """
 def signature_hash_unsafe(m, sk, pk, hashobj)
   h = hashobj.call(sk)
   a = 2 ** ($b-2) + (3...$b-2).inject(0) {|sum, i| sum + 2 ** i * bit(h, i) }
@@ -221,12 +219,10 @@ def isoncurve(_P)
 end
 
 def decodeint(s)
-  #  return sum(2 ** i * bit(s, i) for i in range(0, b))
   (0...$b).inject(0) {|sum, i| sum + 2 ** i * bit(s, i) }
 end
 
 def decodepoint(s)
-  # y = sum(2 ** i * bit(s, i) for i in range(0, b - 1))
   y = (0...$b-1).inject(0) {|sum, i| 2 ** i * bit(s, i) }
   x = xrecover(y)
   x = $q - x if x & 1 != bit(s, $b - 1)
@@ -246,7 +242,6 @@ def checkvalid(s, m, pk)
   raise "signature length is wrong" if s.size != $b / 4
   raise "public-key length is wrong" if pk.size != $b / 8
 
-  # _R = decodepoint(s[:b // 8])
   _R = decodepoint(s[0...$b/8])
   _A = decodepoint(pk)
   _S = decodeint(s[$b/8...$b/4])
