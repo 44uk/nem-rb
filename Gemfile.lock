@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base32 (0.3.2)
+    digest-sha3 (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  base32 (~> 0.3)
+  digest-sha3 (~> 1.1)
+
+BUNDLED WITH
+   1.14.6
