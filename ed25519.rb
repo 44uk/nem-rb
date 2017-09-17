@@ -111,7 +111,7 @@ def scalarmult(_P, e)
   return $ident if e == 0
   _Q = scalarmult(_P, e / 2)
   _Q = edwards_double(_Q)
-  _Q = edwards_add(_Q, _P) if e & 1
+  _Q = edwards_add(_Q, _P) if e & 1 == 1
   _Q
 end
 
