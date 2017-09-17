@@ -223,7 +223,7 @@ def decodeint(s)
 end
 
 def decodepoint(s)
-  y = (0...$b-1).inject(0) {|sum, i| 2 ** i * bit(s, i) }
+  y = (0...$b-1).inject(0) {|sum, i| sum + 2 ** i * bit(s, i) }
   x = xrecover(y)
   x = $q - x if x & 1 != bit(s, $b - 1)
   _P = [x, y, 1, (x * y) % $q]
